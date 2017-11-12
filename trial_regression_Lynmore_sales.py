@@ -18,7 +18,11 @@ df = pd.read_excel(url,
                                 parse_cols=cols)
 #Missing data are just really hard to handle.
 df.iloc[:,2:4]=df.iloc[:,2:4].astype(int,copy=False)/1e11
-df['List Price'].fillna(method='ffill',inplace=True)
+#Filling the missing list price values is difficult.
+#a conservative approach is to assume that missing list prices are  the proportion
+#of mean list to sale prices in order to introduce no more error than needed.
+#The impact of this is to strongly coerce the data, however, to linearity.
+df['List Price'].fillna(df['List Price'].mean()/df['Sale Price'].mean()*df['Sale Price'],inplace=True)
 df.fillna(df.mean(),inplace=True)
 dataset = df.values
 # split into input (X) and output (Y) variables
@@ -84,9 +88,14 @@ with pm.Model() as mdl_ols:
 print(pm.summary(traces_ols))
 pm.traceplot(traces_ols)
 fig,ax = plt.subplots(1,1,figsize=(10,8))
-ax.plot(df['List Price'],pred_values,'b.', markersize=4,alpha=.4,label='NN model')
-ax.plot(df['List Price'],df['Sale Price'],'k.',markersize=4,alpha=.8,label='Original data')
-ax.plot(df['List Price'],results.predict(),'g.',markersize=4,alpha=.4,label='OLS model')
-ax.plot(df['List Price'],SK_preds,'r.',markersize=4,alpha=.4,label='SKLearn')
+ax.set_facecolor(plt.cm.gray(.95))
+ax.set_title('Comparison of prediction methods for Lynmore housing.')
+ax.set_xlabel('List price')
+ax.set_ylabel('Sale price and predicted sale price')
+ax.grid(True)
+ax.plot(df['List Price'],pred_values,'b+', markersize=3,alpha=.8,label='NN model')
+ax.plot(df['List Price'],df['Sale Price'],'k.',markersize=3,alpha=.8,label='Original data')
+ax.plot(df['List Price'],results.predict(),'g|',markersize=5,alpha=.8,label='OLS model')
+ax.plot(df['List Price'],SK_preds,'r.',markersize=2,alpha=.8,label='SKLearn')
 ax.legend()
 plt.show()
