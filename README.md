@@ -1,2 +1,2 @@
 # Public_sharing
-Things I want ot be able to share.
+Things I want to share and discuss...
