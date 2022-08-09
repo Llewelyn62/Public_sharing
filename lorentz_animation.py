@@ -10,6 +10,8 @@ u0, v0, w0 = 0, 1, 1.05
 # Maximum time point and total number of time points
 tmax, n = 100, 10000
 
+#Comment to upload to git
+
 def deriv_lorenz(X, t, sigma, beta, rho):
     """The Lorenz equations."""
     x, y, z = X
@@ -25,6 +27,7 @@ x, y, z = f.T
 
 # Plot the Lorenz attractor using a Matplotlib 3D projection
 fig = plt.figure(figsize=(12,12))
+plt.title("Lorentz")
 ax = fig.gca(projection='3d')
 
 # Make the line multi-coloured by plotting it in segments of length s which
